@@ -79,6 +79,7 @@ interrupt void adca1_isr(void);
 Uint16 AdcaResults[RESULTS_BUFFER_SIZE];
 Uint16 resultsIndex;
 volatile Uint16 bufferFull;
+volatile float outputVoltage;
 
 //
 // Main
@@ -317,6 +318,9 @@ __interrupt void cpuTimer0ISR(void)
 interrupt void adca1_isr(void)
 {
     AdcaResults[resultsIndex++] = AdcaResultRegs.ADCRESULT0;
+
+    outputVoltage = (float)AdcaResultRegs.ADCRESULT0*3.3*0.00024420024420024420024; //conversion ratio 0-4095 --> 0-3.3V
+
     if(RESULTS_BUFFER_SIZE <= resultsIndex)
     {
         resultsIndex = 0;
